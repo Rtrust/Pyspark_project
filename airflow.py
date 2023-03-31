@@ -40,11 +40,11 @@ with DAG("first_python_dag", schedule_interval = '@daily', catchup=False, defaul
 #exo3
 import requests 
 import time 
-import json from airflow
-import DAG from airflow.operators.python_operator
-import PythonOperator from airflow.operators.python
-import BranchPythonOperator from airflow.operators.dummy
-import DummyOperator
+import json 
+from airflow import DAG 
+from airflow.operators.python_operator import PythonOperator 
+from airflow.operators.python import BranchPythonOperator 
+from airflow.operators.dummy import DummyOperator
 from datetime import datetime, timedelta 
 import pandas as pd 
 import numpy as np 
@@ -64,3 +64,11 @@ default_dag_args = {
 
 with DAG('market_data_dag', default_args=default_dag_args, schedule_interval='@daily') as dag:
     task_0 = PythonOperator(task_id = "get_market_data", python_callable = get_data, op_kwargs = {'tickers' : []})"
+
+#exo4
+import time 
+import json from airflow 
+import DAG from airflow.operators.postgres_operator 
+import PostgresOperator from datetime import timedelta
+
+from airflow.utils.dates import days_ago
