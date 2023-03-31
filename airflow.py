@@ -63,12 +63,58 @@ default_dag_args = {
 }
 
 with DAG('market_data_dag', default_args=default_dag_args, schedule_interval='@daily') as dag:
-    task_0 = PythonOperator(task_id = "get_market_data", python_callable = get_data, op_kwargs = {'tickers' : []})"
+    task_0 = PythonOperator(task_id = "get_market_data", python_callable = get_data, op_kwargs = {'tickers' : []})
 
 #exo4
 import time 
-import json from airflow 
-import DAG from airflow.operators.postgres_operator 
-import PostgresOperator from datetime import timedelta
-
+import json 
+from airflow import DAG 
+from airflow.operators.postgres_operator import PostgresOperator 
+from datetime import timedelta
 from airflow.utils.dates import days_ago
+
+default_args = { 'owner': 'airflow',
+                'retries': 1, 
+                'retry_delay': timedelta(minutes=5),
+                
+}
+
+create_query = """ """
+
+insert_data_query = """ """
+
+calculate_average_age_query = """ """
+
+dag_postgres = DAG(
+    dag_id='postgres_dag_connection',
+    default_args=default_args,
+    schedule_interval=None,
+    start_date = days_ago(1)
+)
+
+
+# Define tasks
+create_table = PostgresOperator(
+    task_id = "creation_of_table",
+    sql = create_query,
+    dag = dag_postgres,
+    postgres_conn_id = "postgres_pedro_local"
+)
+
+insert_data = PostgresOperator(
+    task_id = "insertion_of_data",
+    sql = insert_data_query,
+    dag = dag_postgres,
+    postgres_conn_id = "postgres_pedro_local"
+)
+
+group_data  = PostgresOperator(
+    task_id = "calculating_averag_age",
+    sql = calculating_averag_age,
+    dag = dag_postgres,
+    postgres_conn_id = "postgres_pedro_local"
+)
+
+# Define DAG flow
+create_table >> insert_data >> group_data
+
